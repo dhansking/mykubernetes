@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue
+spec:
+  #minReadySeconds: 5
+  selector:
+    matchLabels:
+      myapplabelname: queue
+  replicas: 1
+  template: # template for Pods
+    metadata:
+      labels:
+        myapplabelname: queue
+    spec:
+      containers:
+      - name: queueapp
+        image: richardchesterwood/k8s-fleetman-queue:release2
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simulator
+spec:
+  #minReadySeconds: 5
+  selector:
+    matchLabels:
+      myapplabelname: simulator
+  replicas: 1
+  template: # template for Pods
+    metadata:
+      labels:
+        myapplabelname: simulator
+    spec:
+      containers:
+      - name: simulatorapp
+        image: richardchesterwood/k8s-fleetman-position-simulator:release2
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production-microservice
+---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker
+spec:
+  #minReadySeconds: 5
+  selector:
+    matchLabels:
+      myapplabelname: tracker
+  replicas: 1
+  template: # template for Pods
+    metadata:
+      labels:
+        myapplabelname: tracker
+    spec:
+      containers:
+      - name: trackerapp
+        image: richardchesterwood/k8s-fleetman-position-tracker:release3
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production-microservice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  #minReadySeconds: 5
+  selector:
+    matchLabels:
+      myapplabelname: api-gateway
+  replicas: 1
+  template: # template for Pods
+    metadata:
+      labels:
+        myapplabelname: api-gateway
+    spec:
+      containers:
+      - name: gatewayapp
+        image: richardchesterwood/k8s-fleetman-api-gateway:release2
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production-microservice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  #minReadySeconds: 5
+  selector:
+    matchLabels:
+      myapplabelname: webapp
+  replicas: 1
+  template: # template for Pods
+    metadata:
+      labels:
+        myapplabelname: webapp
+    spec:
+      containers:
+      - name: webappapp
+        image: richardchesterwood/k8s-fleetman-webapp-angular:release2
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production-microservice
